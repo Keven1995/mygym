@@ -2,6 +2,9 @@
   "name": "mygym-mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "dependencies": {
     "@expo/ui": "~56.0.18",
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -43,6 +46,8 @@
   },
   "scripts": {
     "start": "expo start",
+    "start:lan": "EXPO_UNSTABLE_HEADLESS=1 expo start --lan",
+    "start:clear": "EXPO_UNSTABLE_HEADLESS=1 expo start -c --lan",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
