@@ -31,4 +31,9 @@ export const env = {
     appId: requiredEnv(process.env.EXPO_PUBLIC_FIREBASE_APP_ID, 'EXPO_PUBLIC_FIREBASE_APP_ID'),
     measurementId: optionalEnv(process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID),
   },
+  google: {
+    webClientId: optionalEnv(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID),
+    androidClientId: optionalEnv(process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID),
+    iosClientId: optionalEnv(process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID),
+  },
 };
