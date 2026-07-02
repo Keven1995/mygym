@@ -8,9 +8,11 @@
     "scheme": "mygymmobile",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.keven.mygym",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "com.keven.mygym",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -40,6 +42,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dbd4289e-5cb4-499f-aeb4-2adf5c6446db"
+      }
     }
   }
 }
