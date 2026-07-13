@@ -6,10 +6,15 @@ import type { User } from 'firebase/auth';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 import { firebaseAuth } from '@/services/firebaseConfig';
+import { syncUser } from '@/services/mygymApi';
 import { AuthProvider, useAuth } from './auth-context';
 
 jest.mock('@/services/firebaseConfig', () => ({
-  firebaseAuth: { name: 'firebase-auth' },
+  firebaseAuth: { name: 'firebase-auth', currentUser: null },
+}));
+
+jest.mock('@/services/mygymApi', () => ({
+  syncUser: jest.fn(),
 }));
 
 jest.mock('firebase/auth', () => ({
@@ -19,6 +24,7 @@ jest.mock('firebase/auth', () => ({
 
 const onAuthStateChangedMock = jest.mocked(onAuthStateChanged);
 const signOutMock = jest.mocked(signOut);
+const syncUserMock = jest.mocked(syncUser);
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -50,12 +56,15 @@ const renderProbe = async () => {
   });
 
   function Probe() {
-    const { isInitializing, user, signOut: signOutCurrentUser } = useAuth();
+    const { backendUser, isInitializing, isSyncing, syncError, user, signOut: signOutCurrentUser } = useAuth();
 
     return (
       <>
         <Text testID="loading-state">{isInitializing ? 'loading' : 'ready'}</Text>
+        <Text testID="sync-state">{isSyncing ? 'syncing' : 'synced'}</Text>
         <Text testID="user-state">{user?.email ?? 'anonymous'}</Text>
+        <Text testID="backend-user-state">{backendUser?.email ?? 'no-backend-user'}</Text>
+        <Text testID="sync-error-state">{syncError?.message ?? 'no-sync-error'}</Text>
         <Pressable accessibilityRole="button" onPress={signOutCurrentUser}>
           <Text>Sair</Text>
         </Pressable>
@@ -84,6 +93,13 @@ describe('AuthProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     signOutMock.mockResolvedValue(undefined);
+    syncUserMock.mockResolvedValue({
+      id: 'backend-user-id',
+      name: 'Keven',
+      email: 'keven@example.com',
+      firebase_uid: 'firebase-uid',
+    });
+    (firebaseAuth as unknown as { currentUser: User | null }).currentUser = null;
   });
 
   it('starts in a loading state until Firebase returns the first auth state', async () => {
@@ -96,6 +112,7 @@ describe('AuthProvider', () => {
 
   it('stores the restored user and finishes initialization', async () => {
     const user = { email: 'keven@mygym.test' } as User;
+    (firebaseAuth as unknown as { currentUser: User | null }).currentUser = user;
     const { authStateListener } = await renderProbe();
 
     await act(async () => {
@@ -104,6 +121,9 @@ describe('AuthProvider', () => {
 
     expect(screen.getByTestId('loading-state')).toHaveTextContent('ready');
     expect(screen.getByTestId('user-state')).toHaveTextContent('keven@mygym.test');
+    await waitFor(() => {
+      expect(screen.getByTestId('backend-user-state')).toHaveTextContent('keven@example.com');
+    });
   });
 
   it('finishes initialization without a user when the session is absent', async () => {
@@ -115,6 +135,22 @@ describe('AuthProvider', () => {
 
     expect(screen.getByTestId('loading-state')).toHaveTextContent('ready');
     expect(screen.getByTestId('user-state')).toHaveTextContent('anonymous');
+    expect(syncUserMock).not.toHaveBeenCalled();
+  });
+
+  it('stores sync errors when backend user sync fails', async () => {
+    const user = { email: 'keven@mygym.test' } as User;
+    (firebaseAuth as unknown as { currentUser: User | null }).currentUser = user;
+    syncUserMock.mockRejectedValue(new Error('API offline'));
+    const { authStateListener } = await renderProbe();
+
+    await act(async () => {
+      authStateListener(user);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('sync-error-state')).toHaveTextContent('API offline');
+    });
   });
 
   it('delegates sign out to Firebase Auth', async () => {
