@@ -3,7 +3,7 @@ require 'test_helper'
 module Api
 class UsersControllerTest < ActionDispatch::IntegrationTest
   setup do
-    User.delete_all
+    clear_database!
   end
 
   test 'sync creates user from authenticated firebase token' do
@@ -92,37 +92,5 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_includes response_body['details']['email'], "can't be blank"
   end
 
-  private
-
-  def auth_headers
-    { 'Authorization' => 'Bearer firebase-id-token' }
-  end
-
-  def firebase_payload(attributes = {})
-    {
-      'sub' => 'firebase-uid-123',
-      'email' => 'keven@example.com',
-      'name' => 'Keven',
-      'picture' => 'https://example.com/photo.jpg'
-    }.merge(attributes)
-  end
-
-  def stub_firebase_token(payload)
-    with_firebase_token_verifier(->(token) {
-      assert_equal 'firebase-id-token', token
-      payload
-    }) do
-      yield
-    end
-  end
-
-  def with_firebase_token_verifier(verifier)
-    original_verify = FirebaseTokenVerifier.method(:verify)
-    FirebaseTokenVerifier.define_singleton_method(:verify) { |token| verifier.call(token) }
-
-    yield
-  ensure
-    FirebaseTokenVerifier.define_singleton_method(:verify) { |token| original_verify.call(token) }
-  end
 end
 end

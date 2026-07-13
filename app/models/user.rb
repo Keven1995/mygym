@@ -7,6 +7,9 @@ class User
   field :photo_url, type: String
   field :firebase_uid, type: String
 
+  has_many :exercises, dependent: :destroy
+  has_many :workouts, dependent: :destroy
+
   index({ email: 1 }, { unique: true })
   index({ firebase_uid: 1 }, { unique: true })
 

@@ -46,14 +46,4 @@ class UserTest < ActiveSupport::TestCase
     assert_includes indexes, [{ firebase_uid: 1 }, { unique: true }]
   end
 
-  private
-
-  def build_user(attributes = {})
-    User.new({
-      name: 'Keven',
-      email: 'keven@example.com',
-      firebase_uid: 'firebase-uid-123',
-      photo_url: 'https://example.com/photo.jpg'
-    }.merge(attributes))
-  end
 end
