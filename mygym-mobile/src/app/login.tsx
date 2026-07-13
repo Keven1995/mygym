@@ -1,20 +1,16 @@
-import { useState } from 'react';
-
-import type { User } from 'firebase/auth';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useGoogleSignIn } from '@/hooks/use-google-sign-in';
 
-export default function HomeScreen() {
-  const [user, setUser] = useState<User | null>(null);
+export default function LoginScreen() {
   const { error, isLoading, isReady, signInWithGoogle } = useGoogleSignIn();
 
   const handleGoogleSignIn = async () => {
-    const credential = await signInWithGoogle();
-
-    if (credential?.user) {
-      setUser(credential.user);
+    try {
+      await signInWithGoogle();
+    } catch {
+      // useGoogleSignIn stores the error so the screen can render it below.
     }
   };
 
@@ -42,12 +38,6 @@ export default function HomeScreen() {
             <Text style={styles.buttonText}>Entrar com Google</Text>
           )}
         </Pressable>
-
-        {user && (
-          <Text style={styles.successText}>
-            Autenticado como {user.displayName || user.email || 'usuario MyGym'}.
-          </Text>
-        )}
 
         {error && <Text style={styles.errorText}>{error.message}</Text>}
       </View>
@@ -103,11 +93,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
-  },
-  successText: {
-    color: '#15803D',
-    fontSize: 14,
-    lineHeight: 20,
   },
   errorText: {
     color: '#B91C1C',
