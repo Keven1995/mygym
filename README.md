@@ -1,24 +1,50 @@
-# README
+# MyGym API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Backend Rails API do MVP MyGym.
 
-Things you may want to cover:
+## Requisitos
 
-* Ruby version
+- Ruby 3.4.4
+- MongoDB local para testes ou MongoDB Atlas para desenvolvimento/producao
+- Firebase Project ID para validar tokens
 
-* System dependencies
+## Variaveis de ambiente
 
-* Configuration
+Copie `.env.example` para `.env` e configure:
 
-* Database creation
+```env
+MONGODB_URI=
+FIREBASE_PROJECT_ID=
+CORS_ORIGINS=*
+```
 
-* Database initialization
+## Desenvolvimento
 
-* How to run the test suite
+```bash
+bundle install
+bin/rails server
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+## Testes
 
-* Deployment instructions
+Com RVM neste ambiente, use Ruby 3.4.4 explicitamente:
 
-* ...
+```bash
+rvm 3.4.4 do bin/rails test
+```
+
+## API
+
+Endpoints, payloads e padrao de erros estao documentados em `docs/api.md`.
+
+Uma colecao Postman esta disponivel em `docs/mygym-api.postman_collection.json`.
+
+## Deploy Render
+
+O arquivo `render.yaml` define:
+
+- runtime Ruby
+- `bundle install` como build command
+- `bundle exec puma -C config/puma.rb` como start command
+- `/api/health` como health check
+- variaveis `MONGODB_URI`, `FIREBASE_PROJECT_ID` e `CORS_ORIGINS`

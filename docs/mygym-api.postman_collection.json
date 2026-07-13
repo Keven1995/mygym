@@ -1,0 +1,33 @@
+{
+  "info": {
+    "name": "MyGym API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "firebase_id_token", "value": "" },
+    { "key": "exercise_id", "value": "" },
+    { "key": "workout_id", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{firebase_id_token}}", "type": "string" }]
+  },
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{base_url}}/api/health" } },
+    { "name": "Sync User", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"user\": {\n    \"name\": \"Keven\",\n    \"email\": \"keven@example.com\",\n    \"photo_url\": \"https://example.com/photo.jpg\"\n  }\n}" }, "url": "{{base_url}}/api/users/sync" } },
+    { "name": "Get Profile", "request": { "method": "GET", "url": "{{base_url}}/api/me" } },
+    { "name": "Update Profile", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"user\": {\n    \"name\": \"Keven\",\n    \"email\": \"keven@example.com\",\n    \"photo_url\": \"https://example.com/photo.jpg\"\n  }\n}" }, "url": "{{base_url}}/api/me" } },
+    { "name": "List Exercises", "request": { "method": "GET", "url": "{{base_url}}/api/exercises" } },
+    { "name": "Create Exercise", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"exercise\": {\n    \"name\": \"Supino\",\n    \"description\": \"Banco reto\",\n    \"muscle_group\": \"Peito\",\n    \"sets\": 3,\n    \"repetitions\": 10\n  }\n}" }, "url": "{{base_url}}/api/exercises" } },
+    { "name": "Show Exercise", "request": { "method": "GET", "url": "{{base_url}}/api/exercises/{{exercise_id}}" } },
+    { "name": "Update Exercise", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"exercise\": {\n    \"name\": \"Supino Reto\",\n    \"sets\": 4,\n    \"repetitions\": 8\n  }\n}" }, "url": "{{base_url}}/api/exercises/{{exercise_id}}" } },
+    { "name": "Delete Exercise", "request": { "method": "DELETE", "url": "{{base_url}}/api/exercises/{{exercise_id}}" } },
+    { "name": "List Workouts", "request": { "method": "GET", "url": "{{base_url}}/api/workouts" } },
+    { "name": "Create Workout", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"workout\": {\n    \"name\": \"Treino A\",\n    \"weekday\": \"monday\",\n    \"exercises\": [\n      { \"name\": \"Supino\", \"sets\": 3, \"repetitions\": 10 }\n    ]\n  }\n}" }, "url": "{{base_url}}/api/workouts" } },
+    { "name": "Workout Today", "request": { "method": "GET", "url": "{{base_url}}/api/workouts/today" } },
+    { "name": "Show Workout", "request": { "method": "GET", "url": "{{base_url}}/api/workouts/{{workout_id}}" } },
+    { "name": "Update Workout", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"workout\": {\n    \"name\": \"Treino B\",\n    \"weekday\": \"tuesday\",\n    \"exercises\": [\n      { \"name\": \"Agachamento\", \"sets\": 4, \"repetitions\": 8 }\n    ]\n  }\n}" }, "url": "{{base_url}}/api/workouts/{{workout_id}}" } },
+    { "name": "Delete Workout", "request": { "method": "DELETE", "url": "{{base_url}}/api/workouts/{{workout_id}}" } }
+  ]
+}
